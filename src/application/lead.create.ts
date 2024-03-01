@@ -10,15 +10,74 @@ export class LeadCreate {
     this.leadExternal = leadExternal;
   }
 
-  public async sendMessageAndSave({
+  public async sendMessage({
     message,
-    phone,
+    userList,
   }: {
     message: string;
-    phone: string;
+    userList: [{ nombre: string; telefono: string }];
   }) {
-    const responseDbSave = await this.leadRepository.save({ message, phone });//TODO DB
-    const responseExSave = await this.leadExternal.sendMsg({ message, phone });//TODO enviar a ws
-    return {responseDbSave, responseExSave};
+    const sendMessageOperation = [];
+    for (const user of userList) {
+      const editedMesage = message.replace("{nombre}", user.nombre);
+      sendMessageOperation.push(
+        this.leadExternal.sendMsg({
+          message: editedMesage,
+          phone: user.telefono,
+        })
+      );
+    }
+
+    try {
+      const responses = await Promise.all(sendMessageOperation);
+      return responses;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  public async sendMessageToGroup({
+    message,
+    groupId,
+  }: {
+    message: string;
+    groupId: string;
+  }) {
+    try {
+      const response = await this.leadExternal.sendGroupMsg({
+        message,
+        groupId,
+      });
+      return response;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  public async sendImage({
+    image,
+    caption,
+    userList,
+  }: {
+    image: string;
+    caption: string;
+    userList: [{ nombre: string; telefono: string }];
+  }) {
+    const sendImageOperation = [];
+    for (const user of userList) {
+      const editedCaption = caption.replace("{nombre}", user.nombre);
+      sendImageOperation.push(
+        this.leadExternal.sendImg({
+          content: { image, caption: editedCaption },
+          phone: user.telefono,
+        })
+      );
+    }
+    try {
+      const responses = await Promise.all(sendImageOperation);
+      return responses;
+    } catch (error) {
+      return error;
+    }
   }
 }

@@ -8,5 +8,7 @@ const router: Router = Router();
  */
 const leadCtrl: LeadCtrl = container.get("lead.ctrl");
 router.post("/", leadCtrl.sendCtrl);
+router.post("/group", leadCtrl.sendMsgGroupCtrl);
+router.post("/media", leadCtrl.sendImgCtrl);
 
 export { router };
