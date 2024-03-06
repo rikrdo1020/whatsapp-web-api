@@ -16,6 +16,8 @@ RUN apk add --no-cache \
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
+RUN apk add --no-cache eog
+
 # Puppeteer v10.0.0 works with Chromium 92.
 COPY . .
 RUN npm install puppeteer@10.0.0
@@ -33,4 +35,5 @@ RUN npm install
 RUN npm run build
 ARG PUBLIC_URL
 ARG PORT
+EXPOSE 7270
 CMD ["npm", "start"]

@@ -69,9 +69,7 @@ class WsTransporter extends Client implements LeadExternal {
     try {
       if (!this.status) return Promise.resolve({ error: "WAIT_LOGIN" });
       const { message, groupId } = lead;
-      console.log({ message, groupId });
       const chat = await this.getChatById(`${groupId}@g.us`);
-      console.log(chat);
       if (chat.isGroup) {
         const response = await chat.sendMessage(message);
         return { id: response.id.id };
